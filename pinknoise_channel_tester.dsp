@@ -20,9 +20,8 @@ active = checkbox("on/off");
 length = hslider("burst-length", 500, 250, 1000, 1);
 offset = nentry("channel offset", 0, 0, nchannels, 1);
 reset  = 1-button("reset");
-
-channel = _ <: attach(_: vbargraph("channel[style:numerical]",0,0));
-gain = hslider("gain", 0, -12, 0, 0.1) : si.smooth(0.5) : ba.db2linear;
+channel = _ <: attach(_: vbargraph("channel[style:numerical]",0, chmax));
+gain = hslider("gain", -12, -24, 0, 0.1) : si.smooth(0.5) : ba.db2linear;
 
 nsamples = ms2samples(length);
 
