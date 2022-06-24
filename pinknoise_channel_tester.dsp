@@ -3,8 +3,8 @@ import("stdfaust.lib");
 // number of output channels
 nchannels = 14;
 chmax = 24;
-chwave = waveform { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21, 22, 23, 24 };
-chtable = chwave,_ : rdtable;
+// chwave = waveform { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21, 22, 23, 24 };
+// chtable = chwave,_ : rdtable;
 
 // max-like gate
 // note: if n == 0, gate is closed (which is not the case with ba.selectoutn) */
@@ -20,7 +20,7 @@ active = checkbox("on/off");
 length = hslider("burst-length", 500, 250, 1000, 1);
 offset = nentry("channel offset", 0, 0, nchannels, 1);
 reset  = 1-button("reset");
-channel = _ <: attach(_: vbargraph("channel[style:numerical]",0, chmax));
+channel = _ <: attach(_: vbargraph("channel[style:numerical]",0, nchannels));
 gain = hslider("gain", -12, -24, 0, 0.1) : si.smooth(0.5) : ba.db2linear;
 
 nsamples = ms2samples(length);
@@ -33,5 +33,6 @@ burst = phase <= nsamples;
 
 // we increment channel index whenever sample counter reaches nsamples-1
 // we wrap it around nchannels and add the offset
-index = chwave, (rcounter(burst, reset) % nchannels + offset : int) : rdtable : channel;
-process = gate(chmax, index*burst, pn);
+// index = chwave, (rcounter(burst, reset) % nchannels + offset : int) : rdtable : channel;
+index = rcounter(burst, reset) % nchannels + offset + 1 : channel;
+process = gate(nchannels, index*burst, pn);
